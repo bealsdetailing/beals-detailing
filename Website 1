@@ -1,0 +1,1202 @@
+index.html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy"
+content="
+default-src 'self';
+base-uri 'self';
+object-src 'none';
+frame-ancestors 'none';
+form-action 'self' mailto: sms: tel:;
+img-src 'self' data: https:;
+style-src 'self' 'unsafe-inline';
+script-src 'self';
+upgrade-insecure-requests;
+">
+<meta http-equiv="Referrer-Policy" content="no-referrer">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Beals Detailing | Mobile Auto Detailing</title>
+  <meta name="description" content="Beals Detailing — mobile auto detailing in Bozeman, MT. Book a detail today." />
+
+  <style>
+    :root{
+      --bg:#05060a;
+      --fg:#eaf2ff;
+      --muted:#a8b3cf;
+      --neon:#7c5cff;
+      --neon2:#00f5ff;
+      --neon3:#2dff8f;
+      --card:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.12);
+      --shadow: 0 10px 40px rgba(0,0,0,.45);
+      --radius: 20px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--fg);
+      background: radial-gradient(1200px 800px at 10% 10%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(900px 600px at 90% 20%, rgba(0,245,255,.18), transparent 60%),
+                  radial-gradient(800px 600px at 60% 90%, rgba(45,255,143,.14), transparent 60%),
+                  var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Animated “future grid” overlay */
+    .grid{
+      pointer-events:none;
+      position:fixed; inset:0;
+      background:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: radial-gradient(closest-side at 50% 30%, rgba(0,0,0,.9), transparent 70%);
+      opacity:.35;
+      transform: translateZ(0);
+      animation: drift 18s linear infinite;
+      z-index:0;
+    }
+    @keyframes drift{
+      from{background-position: 0 0, 0 0}
+      to{background-position: 0 280px, 280px 0}
+    }
+
+    /* Floating glow blobs */
+    .glow{
+      pointer-events:none;
+      position:fixed;
+      inset:-20%;
+      filter: blur(45px);
+      opacity:.6;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(124,92,255,.25), transparent 40%),
+        radial-gradient(circle at 70% 25%, rgba(0,245,255,.18), transparent 38%),
+        radial-gradient(circle at 55% 75%, rgba(45,255,143,.14), transparent 42%);
+      animation: float 10s ease-in-out infinite alternate;
+      z-index:0;
+    }
+    @keyframes float{
+      from{transform: translate3d(-10px, -8px, 0) scale(1)}
+      to{transform: translate3d(14px, 10px, 0) scale(1.05)}
+    }
+
+    /* Particle canvas */
+    canvas#fx{
+      position:fixed; inset:0;
+      width:100%; height:100%;
+      pointer-events:none;
+      mix-blend-mode: screen;
+      opacity:.8;
+      z-index:0;
+    }
+
+    /* Top nav */
+    .nav{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(5,6,10,.75), rgba(5,6,10,.25));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav-inner{
+      max-width:1100px; margin:0 auto; padding:14px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none; color:var(--fg);
+      letter-spacing:.5px;
+    }
+    .logo{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(0,245,255,.8));
+      box-shadow: 0 0 30px rgba(124,92,255,.35);
+      position:relative;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.55);
+      opacity:.55;
+    }
+    .brand span{font-weight:700}
+    .nav a.link{
+      color:var(--muted);
+      text-decoration:none;
+      font-size:14px;
+      padding:10px 10px;
+      border-radius:12px;
+      transition: .25s ease;
+    }
+    .nav a.link:hover{color:var(--fg); background: rgba(255,255,255,.05)}
+
+    .cta{display:flex; gap:10px; align-items:center;}
+
+    /* Buttons */
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:var(--fg);
+      padding:10px 14px;
+      border-radius: 14px;
+      text-decoration:none;
+      font-weight:650;
+      font-size:14px;
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, background .18s ease, border .18s ease;
+      position:relative;
+      overflow:hidden;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn:hover{transform: translateY(-2px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      border-color: rgba(0,245,255,.35);
+      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(0,245,255,.18));
+      box-shadow: 0 10px 60px rgba(0,245,255,.12);
+    }
+    .btn.primary::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 30%, rgba(0,245,255,.35), transparent 45%);
+      transform: rotate(20deg);
+      animation: shine 2.6s ease-in-out infinite;
+      opacity:.7;
+      pointer-events:none;
+    }
+    @keyframes shine{
+      0%{transform: translateX(-10%) rotate(18deg)}
+      50%{transform: translateX(20%) rotate(18deg)}
+      100%{transform: translateX(-10%) rotate(18deg)}
+    }
+
+    /* Layout */
+    .wrap{max-width:1100px; margin:0 auto; padding:0 18px}
+    header.hero{padding:72px 0 30px; position:relative;}
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:28px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .hero-grid{grid-template-columns:1fr}
+      header.hero{padding-top:46px}
+    }
+
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.4px;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: radial-gradient(circle, var(--neon2), transparent 60%);
+      box-shadow: 0 0 18px rgba(0,245,255,.55);
+    }
+
+    h1{
+      font-size: clamp(34px, 4vw, 58px);
+      line-height:1.05;
+      margin:14px 0 12px;
+      letter-spacing:-.6px;
+    }
+    .grad{
+      background: linear-gradient(90deg, var(--fg), rgba(234,242,255,.65), rgba(0,245,255,.95));
+      -webkit-background-clip:text; background-clip:text;
+      color:transparent;
+    }
+    p.lead{
+      color:var(--muted);
+      font-size: clamp(16px, 1.35vw, 18px);
+      line-height:1.6;
+      margin:0 0 18px;
+      max-width: 60ch;
+    }
+
+    .hero-actions{display:flex; flex-wrap:wrap; gap:10px; margin: 14px 0 0;}
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .panel::after{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(circle at 20% 10%, rgba(124,92,255,.22), transparent 40%),
+                  radial-gradient(circle at 70% 10%, rgba(0,245,255,.18), transparent 42%),
+                  radial-gradient(circle at 50% 90%, rgba(45,255,143,.12), transparent 45%);
+      opacity:.7;
+      pointer-events:none;
+    }
+    .panel-inner{position:relative; padding:18px; z-index:1;}
+    .stat{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      padding:12px 0;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .stat:last-child{border-bottom:none}
+    .stat b{display:block}
+    .stat small{color:var(--muted)}
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:var(--fg);
+      white-space:nowrap;
+    }
+
+    /* Sections */
+    section{padding: 34px 0}
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin-bottom:16px;
+    }
+    h2{margin:0; font-size: 22px; letter-spacing:-.2px;}
+    .sub{color:var(--muted); font-size:14px}
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    @media (max-width: 900px){ .cards{grid-template-columns:1fr} }
+
+    .card{
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      transform: translateY(12px);
+      opacity:0;
+      transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .6s ease;
+    }
+    .card.reveal{transform: translateY(0); opacity:1;}
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(circle at 20% 0%, rgba(0,245,255,.18), transparent 45%),
+                  radial-gradient(circle at 90% 20%, rgba(124,92,255,.16), transparent 55%);
+      opacity:.7;
+      pointer-events:none;
+    }
+    .card h3{margin:0 0 8px; font-size:16px; position:relative}
+    .card p{margin:0 0 10px; color:var(--muted); line-height:1.55; font-size:14px; position:relative}
+    .price{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-top:1px solid rgba(255,255,255,.08);
+      padding-top:12px;
+      margin-top:12px;
+      position:relative;
+    }
+    .price strong{font-size:16px}
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(0,245,255,.08);
+      border:1px solid rgba(0,245,255,.22);
+      color: rgba(234,242,255,.95);
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){ .two{grid-template-columns:1fr} }
+
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 900px){ .gallery{grid-template-columns: repeat(2, 1fr)} }
+    .ph{
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        radial-gradient(circle at 30% 30%, rgba(0,245,255,.22), transparent 45%),
+        radial-gradient(circle at 70% 70%, rgba(124,92,255,.2), transparent 45%);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      transform: translateY(12px);
+      opacity:0;
+      transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .6s ease;
+    }
+    .ph.reveal{transform: translateY(0); opacity:1;}
+    .ph span{
+      position:absolute; left:12px; bottom:10px;
+      color:rgba(234,242,255,.85);
+      font-size:12px;
+      background: rgba(5,6,10,.5);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;
+      border-radius:999px;
+      backdrop-filter: blur(8px);
+    }
+
+    footer{
+      padding: 34px 0 50px;
+      color:var(--muted);
+      border-top:1px solid rgba(255,255,255,.08);
+      position:relative;
+      z-index:1;
+    }
+
+    /* Smooth anchor offset for sticky nav */
+    [id]{scroll-margin-top: 80px;}
+
+    /* ===== INTRO OVERLAY (Garage opening) ===== */
+    .intro{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(circle at top, #0b1020, #05060a 70%);
+      overflow:hidden;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+    .intro.hidden{
+      opacity:0; visibility:hidden; pointer-events:none;
+    }
+    .intro-sky{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(0,245,255,.18), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(124,92,255,.16), transparent 45%);
+      animation: skyFloat 10s ease-in-out infinite alternate;
+    }
+    @keyframes skyFloat{
+      from{transform:translateY(-10px)}
+      to{transform:translateY(10px)}
+    }
+    .intro-floor{
+      position:absolute; bottom:0; left:0; right:0; height:40%;
+      background: linear-gradient(to top, rgba(255,255,255,.08), transparent);
+    }
+
+    .bay{
+      position:relative;
+      width:min(900px, 92vw);
+      height:min(520px, 70vh);
+      border-radius:22px;
+      overflow:hidden;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 40px 120px rgba(0,0,0,.6);
+    }
+    .bay-top{
+      position:absolute; inset:0 0 auto 0; height:40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,.12), rgba(255,255,255,.02));
+      z-index:4;
+    }
+
+    .door{
+      position:absolute;
+      top:40px; bottom:0; width:50%;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.12) 0px,
+          rgba(255,255,255,.12) 2px,
+          rgba(255,255,255,.04) 6px,
+          rgba(255,255,255,.04) 16px
+        );
+      backdrop-filter: blur(4px);
+      transition: transform 1.8s cubic-bezier(.22,.9,.3,1);
+      z-index:3;
+    }
+    .door.left{left:0; transform:translateX(0)}
+    .door.right{right:0; transform:translateX(0)}
+    .intro.open .door.left{transform:translateX(-100%)}
+    .intro.open .door.right{transform:translateX(100%)}
+
+    .inside{
+      position:absolute; inset:40px 0 0 0;
+      padding:26px;
+      opacity:0;
+      transform: scale(.98);
+      transition: opacity 1s ease .9s, transform 1s ease .9s;
+      z-index:2;
+    }
+    .intro.open .inside{opacity:1; transform:scale(1);}
+
+    .neon-sign{
+      font-size:20px;
+      color:#eaf2ff;
+      text-align:center;
+      margin-bottom:14px;
+      letter-spacing:.5px;
+    }
+    .neon-sign b{
+      background: linear-gradient(90deg, #fff, #7c5cff, #00f5ff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .sparkle{color:#00f5ff; margin-right:6px;}
+
+    .scene{
+      display:grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap:18px;
+      align-items:end;
+    }
+    @media(max-width:800px){ .scene{grid-template-columns:1fr} }
+
+    .shelf{
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:14px;
+    }
+    .shelf-title{font-size:14px; color:#a8b3cf; margin-bottom:8px;}
+    .items{
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:10px;
+    }
+    .item{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:10px;
+      text-align:center;
+      font-size:20px;
+    }
+    .item small{
+      display:block;
+      font-size:11px;
+      color:#a8b3cf;
+      margin-top:4px;
+    }
+
+    /* Car selector UI */
+    .car-wrap{text-align:center;}
+    .car-ui{display:flex; align-items:center; justify-content:center; gap:14px;}
+    .arrow{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--fg);
+      cursor:pointer;
+      transition: transform .18s ease, background .18s ease, border .18s ease;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    }
+    .arrow:hover{transform: translateY(-2px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22);}
+
+    .car-btn{background: transparent; border:0; padding:0; cursor:pointer;}
+    .car-btn:focus-visible{
+      outline:2px solid rgba(0,245,255,.7);
+      outline-offset:8px;
+      border-radius: 22px;
+    }
+
+    .model-name{
+      margin-top:8px;
+      font-weight:750;
+      letter-spacing:.3px;
+      background: linear-gradient(90deg, #fff, #7c5cff, #00f5ff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .caption{
+      font-size:13px;
+      color:#a8b3cf;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{opacity:.5}
+      50%{opacity:1}
+    }
+
+    /* Car visual */
+    .car{
+      position:relative;
+      width:260px;
+      height:120px;
+      margin:0 auto 8px;
+    }
+    .car-body{
+      position:absolute;
+      inset:40px 0 20px 0;
+      background: linear-gradient(135deg, #7c5cff, #00f5ff);
+      border-radius:30px;
+      transition: .25s ease;
+    }
+    .car-window{
+      position:absolute;
+      left:40px; right:40px;
+      top:20px; height:35px;
+      background: rgba(255,255,255,.35);
+      border-radius:18px;
+      transition: .25s ease;
+    }
+    .wheel{
+      position:absolute;
+      bottom:0;
+      width:36px; height:36px;
+      border-radius:50%;
+      background:#05060a;
+      border:4px solid #7c5cff;
+    }
+    .w1{left:40px}
+    .w2{right:40px}
+    .car-glow{
+      position:absolute; inset:-20px;
+      background: radial-gradient(circle, rgba(0,245,255,.35), transparent 60%);
+      filter: blur(20px);
+      z-index:-1;
+    }
+
+    /* Shapes by model */
+    #carVisual.coupe .car-body{ border-radius: 40px; height:50px; top:58px; }
+    #carVisual.coupe .car-window{ left:58px; right:58px; top:26px; height:30px; }
+
+    #carVisual.sedan .car-body{ border-radius: 32px; height:55px; top:52px; }
+    #carVisual.sedan .car-window{ left:44px; right:44px; top:24px; height:32px; }
+
+    #carVisual.truck .car-body{ border-radius: 18px; height:54px; top:56px; }
+    #carVisual.truck .car-window{ left:62px; right:70px; top:28px; height:30px; }
+
+    #carVisual.small-suv .car-body{ border-radius: 26px; height:60px; top:50px; }
+    #carVisual.small-suv .car-window{ left:38px; right:38px; top:24px; height:34px; }
+
+    #carVisual.large-suv .car-body{ border-radius: 22px; height:64px; top:48px; }
+    #carVisual.large-suv .car-window{ left:32px; right:32px; top:22px; height:36px; }
+
+    #carVisual.suburban .car-body{ border-radius: 18px; height:68px; top:46px; }
+    #carVisual.suburban .car-window{ left:26px; right:26px; top:20px; height:38px; }
+
+    .skip{
+      position:absolute;
+      bottom:20px; right:20px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:#eaf2ff;
+      padding:8px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      z-index:6;
+    }
+
+    /* ===== Modal ===== */
+    .modal{ position:fixed; inset:0; z-index:10000; }
+    .modal.hidden{ display:none; }
+    .modal-backdrop{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+    }
+    .modal-card{
+      position:relative;
+      width:min(760px, 92vw);
+      margin: 10vh auto 0;
+      padding:18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 40px 120px rgba(0,0,0,.65);
+    }
+    .modal-x{
+      position:absolute; top:12px; right:12px;
+      width:42px; height:42px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--fg);
+      cursor:pointer;
+    }
+    .bullet{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 18px;
+      padding:12px;
+    }
+    .bullet b{ display:block; margin-bottom:4px; }
+    .bullet small{ color: var(--muted); }
+  </style>
+</head>
+
+<body>
+  <div class="glow"></div>
+  <div class="grid"></div>
+  <canvas id="fx"></canvas>
+
+  <!-- ===== INTRO OVERLAY (Garage opening + car selector) ===== -->
+  <div id="intro" class="intro" aria-hidden="false">
+    <div class="intro-sky"></div>
+    <div class="intro-floor"></div>
+
+    <div class="bay" role="presentation">
+      <div class="bay-top"></div>
+
+      <div class="door left"></div>
+      <div class="door right"></div>
+
+      <div class="inside">
+        <div class="neon-sign">
+          <span class="sparkle">✦</span> Welcome to <b>Beals Detailing</b>
+        </div>
+
+        <div class="scene">
+          <div class="shelf">
+            <div class="shelf-title">Detailing Supplies</div>
+            <div class="items">
+              <div class="item"><span>🧴</span><small>Shampoo</small></div>
+              <div class="item"><span>🧽</span><small>Foam</small></div>
+              <div class="item"><span>🪣</span><small>Bucket</small></div>
+              <div class="item"><span>🧼</span><small>Soap</small></div>
+              <div class="item"><span>🧤</span><small>Mitt</small></div>
+              <div class="item"><span>🧻</span><small>Microfiber</small></div>
+            </div>
+          </div>
+
+          <div class="car-wrap">
+            <div class="car-ui">
+              <button class="arrow" id="prevCar" type="button" aria-label="Previous car">◀</button>
+
+              <button class="car-btn" id="carSelect" type="button" aria-label="Select this car model">
+                <div class="car" id="carVisual">
+                  <div class="car-glow"></div>
+                  <div class="car-body"></div>
+                  <div class="car-window"></div>
+                  <div class="wheel w1"></div>
+                  <div class="wheel w2"></div>
+                </div>
+              </button>
+
+              <button class="arrow" id="nextCar" type="button" aria-label="Next car">▶</button>
+            </div>
+
+            <div class="model-name" id="modelName">Coupe</div>
+            <div class="caption">Pick a vehicle, then tap the car ✦</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="skipIntro" class="skip" type="button">Skip ✦</button>
+  </div>
+
+  <!-- ===== Main site ===== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top" aria-label="Beals Detailing home">
+        <div class="logo"></div>
+        <span>Beals Detailing</span>
+      </a>
+      <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+        <a class="link" href="#services">Services</a>
+        <a class="link" href="#gallery">Gallery</a>
+        <a class="link" href="#about">About</a>
+        <a class="link" href="#contact">Contact</a>
+      </div>
+      <div class="cta">
+        <!-- CHANGE THIS PHONE NUMBER -->
+        <a class="btn primary" href="sms:+14065959945?&body=Hi%20Beals%20Detailing!%20I%E2%80%99d%20like%20a%20quote%20for%20my%20vehicle.">
+          ✦ Text for Quote
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top" class="wrap" style="position:relative; z-index:1;">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="kicker"><span class="dot"></span> Mobile Auto Detailing • Bozeman, MT</div>
+          <h1><span class="grad">Future-Clean</span> detailing that comes to you.</h1>
+          <p class="lead">
+            High-quality interior + exterior detailing at your home, work, or wherever you’re parked.
+            Fast scheduling. Clean results. Zero hassle.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#contact">⚡ Book Now</a>
+            <a class="btn" href="#services">View Packages</a>
+            <!-- CHANGE THIS -->
+            <a class="btn" href="https://instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-inner">
+            <div class="stat">
+              <div>
+                <b>Service Area</b>
+                <small>Bozeman + Gallatin Valley</small>
+              </div>
+              <span class="badge">Mobile</span>
+            </div>
+            <div class="stat">
+              <div>
+                <b>Specialties</b>
+                <small>Interiors • Exteriors • Paint care</small>
+              </div>
+              <span class="badge">Pro</span>
+            </div>
+            <div class="stat">
+              <div>
+                <b>Get a Quote</b>
+                <small>Text a photo + your vehicle info</small>
+              </div>
+              <span class="badge">Fast</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="services">
+      <div class="section-title">
+        <div>
+          <h2>Packages</h2>
+          <div class="sub">Edit names + prices to match what you offer.</div>
+        </div>
+        <a class="btn" href="#contact">Get Estimate</a>
+      </div>
+
+      <div class="cards">
+        <div class="card reveal-on-scroll">
+          <h3>Interior Reset</h3>
+          <p>Vacuum + wipe-down, crevices, mats, interior windows, fresh finish.</p>
+          <div class="price"><strong>$—</strong><span class="pill">1.5–3 hrs</span></div>
+        </div>
+
+        <div class="card reveal-on-scroll">
+          <h3>Exterior Shield</h3>
+          <p>Wash, wheels/tires, trim, glass, protection for a clean glossy look.</p>
+          <div class="price"><strong>$—</strong><span class="pill">1–2.5 hrs</span></div>
+        </div>
+
+        <div class="card reveal-on-scroll">
+          <h3>Full Detail</h3>
+          <p>The complete interior + exterior transformation. Best value bundle.</p>
+          <div class="price"><strong>$—</strong><span class="pill">3–6 hrs</span></div>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:14px;">
+        <div class="card reveal-on-scroll">
+          <h3>Add-Ons</h3>
+          <p>Pet hair removal • Stain shampoo • Wax/sealant • Paint correction • Odor treatment</p>
+          <div class="price"><strong>From $—</strong><span class="pill">Custom</span></div>
+        </div>
+
+        <div class="card reveal-on-scroll">
+          <h3>How it works</h3>
+          <p>1) Text for quote → 2) Pick a time → 3) We detail on-site → 4) You drive clean.</p>
+          <div class="price"><strong>Simple</strong><span class="pill">Mobile</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="section-title">
+        <div>
+          <h2>Gallery</h2>
+          <div class="sub">Replace placeholders with your before/after photos.</div>
+        </div>
+      </div>
+      <div class="gallery">
+        <div class="ph reveal-on-scroll"><span>Before/After</span></div>
+        <div class="ph reveal-on-scroll"><span>Interior</span></div>
+        <div class="ph reveal-on-scroll"><span>Exterior</span></div>
+        <div class="ph reveal-on-scroll"><span>Wheels</span></div>
+        <div class="ph reveal-on-scroll"><span>Seats</span></div>
+        <div class="ph reveal-on-scroll"><span>Trim</span></div>
+        <div class="ph reveal-on-scroll"><span>Paint</span></div>
+        <div class="ph reveal-on-scroll"><span>Glass</span></div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="section-title">
+        <div>
+          <h2>About Beals Detailing</h2>
+          <div class="sub">Short, trustworthy, local.</div>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card reveal-on-scroll">
+          <h3>Local. Mobile. Detail-obsessed.</h3>
+          <p>
+            Beals Detailing is a locally owned mobile detailing service in Bozeman, Montana.
+            We focus on high-quality results, careful product choice, and a clean finish that lasts.
+          </p>
+        </div>
+        <div class="card reveal-on-scroll">
+          <h3>FAQ</h3>
+          <p><b>Do you need water/power?</b> <span style="color:var(--muted)">Edit this answer based on your setup.</span></p>
+          <p><b>How long does it take?</b> <span style="color:var(--muted)">Most details take 1–6 hours depending on package + condition.</span></p>
+          <p><b>Where do you serve?</b> <span style="color:var(--muted)">Bozeman + Gallatin Valley.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="section-title">
+        <div>
+          <h2>Book / Contact</h2>
+          <div class="sub">Fastest: text for a quote.</div>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card reveal-on-scroll">
+          <h3>Text for a quote</h3>
+          <p>Send: vehicle year/make/model + your location + photos (interior/exterior).</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <!-- CHANGE THIS PHONE NUMBER -->
+            <a class="btn primary" href="sms:+14065959945?&body=Hi%20Beals%20Detailing!%20Year/Make/Model:%20%0ALocation:%20%0APhotos:%20">
+              ✦ Text Now
+            </a>
+            <a class="btn" href="tel:+14065959945">Call</a>
+          </div>
+          <p style="margin-top:12px; font-size:13px; color:var(--muted)">
+            Replace the phone number in the code with your real number.
+          </p>
+        </div>
+
+        <div class="card reveal-on-scroll">
+          <h3>Quick form (optional)</h3>
+          <p style="margin-bottom:10px;">This is a simple form that opens your email app.</p>
+          <form id="mailForm">
+            <label style="display:block; font-size:12px; color:var(--muted); margin:8px 0 6px;">Name</label>
+            <input required name="name" style="width:100%; padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05); color:var(--fg);" />
+
+            <label style="display:block; font-size:12px; color:var(--muted); margin:10px 0 6px;">Vehicle</label>
+            <input required name="vehicle" placeholder="e.g., 2016 Subaru Outback" style="width:100%; padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05); color:var(--fg);" />
+
+            <label style="display:block; font-size:12px; color:var(--muted); margin:10px 0 6px;">Message</label>
+            <textarea required name="msg" rows="4" style="width:100%; padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05); color:var(--fg); resize:vertical;"></textarea>
+
+            <button class="btn primary" type="submit" style="margin-top:12px; cursor:pointer;">Send Email</button>
+            <p style="margin-top:10px; font-size:13px; color:var(--muted)">
+              Edit the email address in the script below.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap" style="padding:0">
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <span>© <span id="yr"></span> Beals Detailing</span>
+          <span>Built with code • Hosted free</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ===== Model Detail Modal ===== -->
+  <div id="modelModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-x" id="closeModal" type="button" aria-label="Close">✕</button>
+      <h2 id="modalTitle" style="margin:0 0 8px;">Model Details</h2>
+      <p id="modalDesc" style="margin:0 0 12px; color:var(--muted); line-height:1.6;"></p>
+
+      <div id="modalBullets" style="display:grid; gap:10px; margin-top:10px;"></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+        <a class="btn primary" id="modalBook" href="#contact">⚡ Book this Detail</a>
+        <a class="btn" href="#services">See Packages</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const id = a.getAttribute('href');
+        if(!id || id === "#") return;
+        const el = document.querySelector(id);
+        if(!el) return;
+        e.preventDefault();
+        el.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // ===== Scroll reveal
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          en.target.classList.add('reveal');
+          io.unobserve(en.target);
+        }
+      });
+    }, {threshold: 0.12});
+    document.querySelectorAll('.reveal-on-scroll').forEach(el=>io.observe(el));
+
+    // ===== Year
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    // ===== Email form -> opens mail client
+    const YOUR_EMAIL = "offical.detailing.co@gmail.com"; // <--- change this
+    document.getElementById('mailForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = new FormData(e.target);
+      const subject = encodeURIComponent("Detail Quote Request");
+      const body = encodeURIComponent(
+        `Name: ${data.get('name')}\nVehicle: ${data.get('vehicle')}\n\nMessage:\n${data.get('msg')}`
+      );
+      window.location.href = `mailto:${YOUR_EMAIL}?subject=${subject}&body=${body}`;
+    });
+
+    // ===== Futuristic particle sparks (canvas)
+    const canvas = document.getElementById('fx');
+    const ctx = canvas.getContext('2d');
+
+    let w, h, dpr;
+    function resize(){
+      dpr = Math.max(1, window.devicePixelRatio || 1);
+      w = canvas.width = Math.floor(window.innerWidth * dpr);
+      h = canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const rand = (a,b)=>a + Math.random()*(b-a);
+
+    const sparks = [];
+    const SPARKS = 90;
+    for(let i=0;i<SPARKS;i++){
+      sparks.push({
+        x: rand(0,w), y: rand(0,h),
+        vx: rand(-.12,.12)*dpr,
+        vy: rand(.05,.25)*dpr,
+        r: rand(0.7, 2.2)*dpr,
+        a: rand(.08,.25),
+        phase: rand(0, Math.PI*2)
+      });
+    }
+
+    let mx = w/2, my = h/2;
+    window.addEventListener('mousemove', (e)=>{
+      mx = e.clientX * dpr;
+      my = e.clientY * dpr;
+    });
+
+    function step(){
+      ctx.clearRect(0,0,w,h);
+
+      const g = ctx.createRadialGradient(w*0.5, h*0.35, 0, w*0.5, h*0.35, Math.max(w,h)*0.65);
+      g.addColorStop(0, "rgba(0,245,255,0.06)");
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+
+      for(const s of sparks){
+        s.x += s.vx;
+        s.y += s.vy;
+
+        if(s.y > h + 20*dpr){ s.y = -20*dpr; s.x = rand(0,w); }
+        if(s.x < -20*dpr) s.x = w + 20*dpr;
+        if(s.x > w + 20*dpr) s.x = -20*dpr;
+
+        const dx = mx - s.x, dy = my - s.y;
+        const dist = Math.hypot(dx,dy) + 0.001;
+        const pull = Math.min(0.06*dpr, 40*dpr/dist) * 0.008;
+        s.vx += (dx/dist) * pull;
+        s.vy += (dy/dist) * pull;
+
+        s.vx *= 0.985;
+        s.vy *= 0.99;
+
+        s.phase += 0.03;
+        const alpha = s.a + Math.sin(s.phase)*0.05;
+
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(0,245,255,${Math.max(0,alpha)})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - s.vx*18, s.y - s.vy*18);
+        ctx.strokeStyle = `rgba(124,92,255,${Math.max(0,alpha*0.6)})`;
+        ctx.lineWidth = 1.2*dpr;
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(step);
+    }
+    step();
+
+    // ===== INTRO: garage opening + car selector + modal
+    const intro = document.getElementById("intro");
+    const skip = document.getElementById("skipIntro");
+
+    setTimeout(() => intro.classList.add("open"), 600);
+
+    const carModels = [
+      {
+        key: "coupe",
+        name: "Coupe",
+        desc: "Sleek and compact — perfect for a sharp, showroom-style finish.",
+        bullets: [
+          ["Exterior Shine", "Gloss boost, trim detail, and streak-free glass."],
+          ["Interior Detail", "Dust-free cabin with clean seats and console."],
+          ["Optional Upgrade", "Paint correction for maximum gloss."]
+        ]
+      },
+      {
+        key: "sedan",
+        name: "Sedan",
+        desc: "Daily-driver friendly detailing with a clean, refreshed interior and exterior.",
+        bullets: [
+          ["Interior Reset", "Vacuum, wipe-down, cracks and crevices."],
+          ["Exterior Wash", "Foam wash, wheels, tires, and protection."],
+          ["Best Value", "Full detail recommended."]
+        ]
+      },
+      {
+        key: "truck",
+        name: "Truck",
+        desc: "Built for dirt and work — we focus on tough cleanup and durable protection.",
+        bullets: [
+          ["Heavy-Duty Exterior", "Mud, wheels, tires, and road grime."],
+          ["Cab Interior", "Dash, seats, and center console reset."],
+          ["Protection", "Sealant helps keep it cleaner longer."]
+        ]
+      },
+      {
+        key: "small-suv",
+        name: "Small SUV",
+        desc: "Great for daily use, pets, and weekend adventures.",
+        bullets: [
+          ["Interior Deep Clean", "Seats, carpets, and cargo area."],
+          ["Exterior Detail", "Foam wash, trim, and glass."],
+          ["Add-ons", "Pet hair or stain removal available."]
+        ]
+      },
+      {
+        key: "large-suv",
+        name: "Large SUV",
+        desc: "More space means more detail — perfect for families and road trips.",
+        bullets: [
+          ["Full Interior Detail", "All rows, mats, and cargo space."],
+          ["Exterior Protection", "Gloss and long-lasting protection."],
+          ["Recommended", "Full detail package."]
+        ]
+      },
+      {
+        key: "suburban",
+        name: "Suburban / XL SUV",
+        desc: "Maximum size, maximum impact — our most detailed service option.",
+        bullets: [
+          ["Complete Interior", "Every row, cupholder, and crevice."],
+          ["Exterior Restore", "Large-body wash, wheels, and trim."],
+          ["Premium Option", "Ideal for families, work, and travel."]
+        ]
+      }
+    ];
+
+    const carVisual = document.getElementById("carVisual");
+    const modelName = document.getElementById("modelName");
+    const prevCar = document.getElementById("prevCar");
+    const nextCar = document.getElementById("nextCar");
+    const carSelect = document.getElementById("carSelect");
+
+    const modal = document.getElementById("modelModal");
+    const closeModal = document.getElementById("closeModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    const modalBullets = document.getElementById("modalBullets");
+
+    let idx = 0;
+
+    function applyModel(){
+      const m = carModels[idx];
+      modelName.textContent = m.name;
+
+      carVisual.classList.remove("coupe","sedan","truck","small-suv","large-suv","suburban");
+      carVisual.classList.add(m.key);
+    }
+
+    function openDetail(){
+      const m = carModels[idx];
+
+      modalTitle.textContent = `${m.name} — Recommended Detail`;
+      modalDesc.textContent = m.desc;
+
+      modalBullets.innerHTML = "";
+      m.bullets.forEach(([t, s])=>{
+        const div = document.createElement("div");
+        div.className = "bullet";
+        div.innerHTML = `<b>${t}</b><small>${s}</small>`;
+        modalBullets.appendChild(div);
+      });
+
+      intro.classList.add("hidden");
+      modal.classList.remove("hidden");
+      modal.setAttribute("aria-hidden","false");
+    }
+
+    function closeDetail(){
+      modal.classList.add("hidden");
+      modal.setAttribute("aria-hidden","true");
+    }
+
+    prevCar.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      idx = (idx - 1 + carModels.length) % carModels.length;
+      applyModel();
+    });
+
+    nextCar.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      idx = (idx + 1) % carModels.length;
+      applyModel();
+    });
+
+    carSelect.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      openDetail();
+    });
+
+    skip.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      intro.classList.add("hidden");
+    });
+
+    closeModal.addEventListener("click", closeDetail);
+    modal.addEventListener("click", (e)=>{
+      if(e.target.classList.contains("modal-backdrop")) closeDetail();
+    });
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeDetail();
+    });
+
+    applyModel();
+  </script>
+</body>
+</html>
